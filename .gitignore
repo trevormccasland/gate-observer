@@ -3,3 +3,4 @@ ChangeLog
 build
 *.egg-info
 *.log
+*.swp
