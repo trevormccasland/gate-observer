@@ -1,11 +1,11 @@
-import jenkins
 import logging
 import threading
 import time
 
-from gate_observer.gate import client
+from gate_observer import client
 
 LOG = logging.getLogger(__file__)
+
 
 class JobObserver(threading.Thread):
     """puts events onto a shared q given a jenkins server and job name"""
@@ -23,25 +23,25 @@ class JobObserver(threading.Thread):
         return self.client.is_build_building(self.job, self.build_number)
 
     def _wait_for_build_to_stop(self):
-         while True:
-             # wait for the build to stop
-             if not self.is_building():
-                 print('build %s for job %s '
-                       'stopped' % (self.build_number, self.job))
-                 break
+        while self.is_building():
+            # wait for the build to stop
+            time.sleep(0.1)
+        message = ('build %s for job %s stopped' %
+                   (self.build_number, self.job))
+        LOG.info('(%s) %s', self.name, message)
+        self.q.put(message)
 
     def run(self):
-        while True:
+        while not self.exit:
             self.build_number = self.client.get_current_build_number(self.job)
-            if self.exit:
-                print('thread exiting..')
-                break
             if self.is_building():
-                print('build %s for job %s '
-                      'started' % (self.build_number, self.job))
+                
+                message = ('build %s for job %s started' %
+                           (self.build_number, self.job))
+                LOG.info('(%s) %s', self.name, message)
+                self.q.put(message)
                 self._wait_for_build_to_stop()
-            print('build %s for job %s is running: '
-                  '%s' % (self.build_number, self.job, self.is_building()))
+        LOG.info('(%s) thread exiting..', self.name)
 
     def stop(self):
         self.exit = True

@@ -1,7 +1,8 @@
 import jenkins
-import json
+
 
 class JenkinsClient(object):
+    """Just a wrapper around python-jenkins"""
 
     def __init__(self, server):
         self.server = server
