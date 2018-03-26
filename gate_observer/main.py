@@ -13,7 +13,7 @@ def get_publishers():
     return [
         chat_bot.ChatBotClient(dict(config.items('chat_bot')))
     ]
-    
+
 
 def main():
     config = ConfigParser.ConfigParser()
@@ -30,7 +30,7 @@ def main():
     try:
         jenkins_manager.start()
     except (KeyboardInterrupt, SystemExit):
-        print('Keyboard interrupt.. main exiting')
+        logging.info('Keyboard interrupt.. main exiting')
         jenkins_manager.stop()
 
 if __name__ == "__main__":

@@ -8,11 +8,11 @@ LOG = logging.getLogger(__file__)
 
 
 class JobObserver(threading.Thread):
-    """puts events onto a shared q given a jenkins server and job name"""
+    """puts events onto a shared queue given a jenkins server and job name"""
 
-    def __init__(self, name, server, job, q):
+    def __init__(self, name, server, job, queue):
         super(JobObserver, self).__init__(name=name)
-        self.q = q
+        self.queue = queue
         self.job = job
         self.server = server
         self.client = client.JenkinsClient(self.server)
@@ -29,17 +29,16 @@ class JobObserver(threading.Thread):
         message = ('build %s for job %s stopped' %
                    (self.build_number, self.job))
         LOG.info('(%s) %s', self.name, message)
-        self.q.put(message)
+        self.queue.put(message)
 
     def run(self):
         while not self.exit:
             self.build_number = self.client.get_current_build_number(self.job)
             if self.is_building():
-                
                 message = ('build %s for job %s started' %
                            (self.build_number, self.job))
                 LOG.info('(%s) %s', self.name, message)
-                self.q.put(message)
+                self.queue.put(message)
                 self._wait_for_build_to_stop()
         LOG.info('(%s) thread exiting..', self.name)
 

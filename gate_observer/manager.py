@@ -3,6 +3,7 @@ import Queue
 import time
 
 from gate_observer import observer
+from gate_observer.publishers import exceptions as exc
 
 LOG = logging.getLogger(__file__)
 
@@ -12,7 +13,7 @@ class JenkinsManager(object):
 
     def __init__(self, server, jobs, publishers):
         # the all encompassing queue
-        self.q = Queue.Queue()
+        self.queue = Queue.Queue()
         # for filtering
         self.jobs = jobs
         # for communicating
@@ -23,7 +24,7 @@ class JenkinsManager(object):
         self.workers = []
         for job in self.jobs:
             worker = observer.JobObserver('%s-thread' % job,
-                                          self.server, job, self.q)
+                                          self.server, job, self.queue)
             self.workers.append(worker)
 
     def publish(self, data):
@@ -33,11 +34,11 @@ class JenkinsManager(object):
     def _process_queue(self):
         while True:
             try:
-                data = self.q.get_nowait()
+                data = self.queue.get_nowait()
                 self.publish(data)
             except Queue.Empty:
                 time.sleep(0.1)
-            except Exception as err:
+            except exc.PublisherException as err:
                 LOG.info('Something happened while publishing data: %s', err)
 
     def start(self):
@@ -53,8 +54,4 @@ class JenkinsManager(object):
     def stop(self):
         for worker in self.workers:
             if worker.is_alive():
-                try:
-                    worker.stop()
-                except Exception as e:
-                    LOG.info('Something happened while stopping %s, err: %s',
-                             (worker.name, e))
+                worker.stop()

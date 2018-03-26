@@ -16,6 +16,3 @@ class JenkinsClient(object):
         except jenkins.NotFoundException:
             return False
         return info['building']
-
-    def get_event_details(self, job_name):
-        print(self.get_next_build(job_name)['changeSet'])
