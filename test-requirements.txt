@@ -2,3 +2,4 @@ hacking # Apache-2.0
 stestr
 mock
 flake8-import-order==0.12 # LGPLv3
+coverage

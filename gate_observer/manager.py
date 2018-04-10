@@ -39,7 +39,8 @@ class JenkinsManager(object):
             except Queue.Empty:
                 time.sleep(0.1)
             except exc.PublisherException as err:
-                LOG.info('Something happened while publishing data: %s', err)
+                LOG.error('Something happened while publishing data: %s', err)
+                break
 
     def start(self):
         for worker in self.workers:
