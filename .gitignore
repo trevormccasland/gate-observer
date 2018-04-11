@@ -8,3 +8,6 @@ build
 *.tox
 *.eggs
 .stestr/*
+.coverage*
+!.coveragerc
+cover/
