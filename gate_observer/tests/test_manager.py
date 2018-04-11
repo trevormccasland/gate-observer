@@ -2,8 +2,8 @@ import testtools
 
 import mock
 
-from gate_observer.publishers import exceptions as exc
 from gate_observer import manager
+from gate_observer.publishers import exceptions as exc
 
 
 class JenkinsManagerTestCase(testtools.TestCase):
@@ -27,7 +27,6 @@ class JenkinsManagerTestCase(testtools.TestCase):
         mock_queue.get_nowait.side_effect = [test_data, exc.PublisherException]
         self.manager.queue = mock_queue
         self.manager.start()
-        calls = [mock.call]
         self.assertEqual(len(self.jobs),
                          self.mock_observer.return_value.start.call_count)
         self.assertEqual(len(self.jobs),
