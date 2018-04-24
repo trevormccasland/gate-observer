@@ -13,6 +13,6 @@ class JenkinsClient(object):
     def is_build_building(self, job_name, build_number):
         try:
             info = self.server.get_build_info(job_name, build_number)
-        except jenkins.NotFoundException:
+        except (jenkins.NotFoundException, jenkins.JenkinsException):
             return False
         return info['building']
