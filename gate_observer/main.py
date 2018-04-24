@@ -20,8 +20,10 @@ def main():
     config.read(['etc/gate-observer.conf'])
     logging.basicConfig(filename=config.get('default', 'log_file_name'),
                         level=config.getint('default', 'log_level'))
-    host = ('http://%s:%s' % (config.get('jenkins', 'host'),
-                              config.get('jenkins', 'port')))
+    host = 'http://%s' % config.get('jenkins', 'host')
+    port = config.get('jenkins', 'port', None)
+    if port:
+        host = '%s:%s' % (host, port)
     server = jenkins.Jenkins(host, config.get('jenkins', 'user'),
                              config.get('jenkins', 'password'))
     job_names = config.get('jenkins', 'job_names').splitlines()

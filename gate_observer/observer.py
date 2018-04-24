@@ -1,3 +1,4 @@
+import jenkins
 import logging
 import threading
 import time
@@ -12,12 +13,16 @@ class JobObserver(threading.Thread):
 
     def __init__(self, name, server, job, queue):
         super(JobObserver, self).__init__(name=name)
+        self.exit = False
         self.queue = queue
         self.job = job
         self.server = server
         self.client = client.JenkinsClient(self.server)
-        self.build_number = self.client.get_current_build_number(job)
-        self.exit = False
+        try:
+            self.build_number = self.client.get_current_build_number(job)
+        except jenkins.NotFoundException:
+            LOG.error("(%s) Could not find job '%s'", self.name, self.job)
+            raise SystemExit
 
     def is_building(self):
         return self.client.is_build_building(self.job, self.build_number)
