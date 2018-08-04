@@ -63,9 +63,9 @@ meeting_id=<chatroom_meeting_id>
 Test Environment
 ================
 
-1. Use a jenkins container from https://github.com/jenkinsci/docker
-2. create jobs and put those names in your jenkins config section.
-3. start the program, start a build and you should see logging similar to:
+#. Use a jenkins container from https://github.com/jenkinsci/docker
+#. create jobs and put those names in your jenkins config section.
+#. start the program, start a build and you should see logging similar to:
   INFO:/usr/local/lib/python2.7/dist-packages/gate_observer/publishers/chat_bot.pyc:Message 'build 9 for job test-job2 started' successfully sent to <interpolated uri>
   INFO:/usr/local/lib/python2.7/dist-packages/gate_observer/observer.pyc:(test-job2-thread) build 9 for job test-job2 stopped
   DEBUG:urllib3.connectionpool:<proxy> "POST <interpolated uri> HTTP/1.1" 200 None
